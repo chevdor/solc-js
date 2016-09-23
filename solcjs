@@ -6,20 +6,13 @@ var pkg = require('./package.json');
 var helpers = require('./lib/helpers')();
 var chalk = require('chalk');
 
-
-var fakeList= ['v1', 'v2', 'v3'];
-
 // FIXME: remove annoying exception catcher of Emscripten
 //        see https://github.com/chriseth/browser-solidity/issues/167
 process.removeAllListeners('uncaughtException');
 
-<<<<<<< HEAD
 
 
 var cmds = {get: 'get', build:'build', list:'list', version: 'version', info: 'info', clean: 'clean'};
-=======
-var cmds = {get: 'get', build:'build', list:'list', version: 'version', info: 'info'};
->>>>>>> parent of ce75e1d... Add initial support for local list
 
 var yargs = require('yargs')
 .usage('Usage: $0 <cmd> [options] [input_file...]')
@@ -42,7 +35,6 @@ var yargs = require('yargs')
 .command(cmds.info, 'Show some info about solcjs')
 .command(cmds.version, 'Show version and exit')
 
-<<<<<<< HEAD
 .command(cmds.list, 'List available compilers')
 .option('local', {
   describe: 'List - all the local compilers',
@@ -72,45 +64,23 @@ var yargs = require('yargs')
   type: 'boolean'
 })
 .alias('get', 'get')
-=======
-.command(cmds.get, 'Fetch one or more compilers')
-.alias('latest', 'latest')
-
-.command(cmds.list, 'List available compilers')
-.option('local', {
-  describe: 'Switch for the local compilers',
-  type: 'boolean',
-  default: false,
-})
->>>>>>> parent of ce75e1d... Add initial support for local list
 
 .command(cmds.clean, 'Delete a/some compilers')
 .alias('clean', 'clean')
 
 .command(cmds.build, 'Build a smart contract')
 .option('optimize', {
-<<<<<<< HEAD
   describe: 'Build - Enable bytecode optimizer',
-=======
-  describe: 'Enable bytecode optimizer.',
->>>>>>> parent of ce75e1d... Add initial support for local list
   type: 'boolean'
 })
 .option('bin', {
   alias: 'bin',
   type: 'boolean',
   default: false,
-<<<<<<< HEAD
   describe: 'Build - Generate the bytecode of the contract(s)'
 })
 .option('abi', {
   describe: 'Build - Generate the ABI of the contract(s)',
-=======
-  describe: 'x marks the spot'
-})
-.option('abi', {
-  describe: 'ABI of the contracts.',
->>>>>>> parent of ce75e1d... Add initial support for local list
   type: 'boolean'
 })
 .option('output-dir', {
@@ -125,39 +95,18 @@ var yargs = require('yargs')
 })
 
 
-
-
 .global([ 'version', 'optimize' ])
 .showHelpOnFail(true, 'Specify --help for available options')
 .help()
 .demand(1, 'You need to provide at least a command.');
 
 
-<<<<<<< HEAD
-=======
-// Samples
-// solcjs                       => help
-// solcjs --help                => help
-// solcjs build|list|get
-//    build   => --abi --bin --optimize file1 files2 ...
-//    
-//    list [--releases] => list releases only
-//    list --commit     => releases + commits
-//    list --nightly    => releases + commits + nightly = ALL 
-//    list --local      => show what we have against what is available
-//    
-//    get --latest      => get the latest
-//    get <version>     => get a specific version
-//    get --all         => get all the compilers not already there
-
-
->>>>>>> parent of ce75e1d... Add initial support for local list
 var argv = yargs.argv;
 var cmd = argv._[0].toLowerCase();
 
 
 // debug
-if (1){
+if (0){
   console.log(argv);
   console.log('cmd ' + cmd);
 }
@@ -169,7 +118,6 @@ if (!(cmd in cmds))
 
 
 var compiler = argv.compiler;
-<<<<<<< HEAD
 var compilers = require('./lib/compilers')();
 
 
@@ -177,27 +125,10 @@ if (cmd === 'info'){
   console.log('solcjs version: \t' + pkg.version);
   console.log('Compiler repository: \t' + compilers.repository);
   console.log('Node version: \t\t' + process.version);
-=======
-var compilers = require('./compilers')();
-
-if (cmd === 'list'){
-  if(argv.local)
-    compilers.getListLocal();
-  else
-    compilers.getList({
-      release: argv.releases, 
-      nightly: argv.nightly,
-      commit: argv.commit
-    }, function(list){
-      console.log(list);
-    });
-
->>>>>>> parent of ce75e1d... Add initial support for local list
   helpers.exit();
 }
 
 
-<<<<<<< HEAD
 // Usage:
 // solcjs list            => returns the summary of the number of releases online + local
 // solcjs list --local    => list the local compilers
@@ -296,13 +227,6 @@ if (cmd === 'list'){
   });
 }
 
-=======
-if (cmd === 'info'){
-  console.log('You are running solcjs version ' + pkg.version);
-  console.log('Compiler Repo: ' + repo);
-  console.log('Node version ' + process.version);
-  helpers.exit();
->>>>>>> parent of ce75e1d... Add initial support for local list
 }
 
 if (cmd === 'clean'){
@@ -327,7 +251,6 @@ if (cmd === 'get'){
   if (requestedVersion && requestedVersion.indexOf('.js')<=0)
     requestedVersion += '.js';
 
-<<<<<<< HEAD
   compilers.getList(function (err, list) {
     
     // list = JSON.parse(list);
@@ -371,10 +294,6 @@ if (cmd === 'version'){
 // solcjs build --bin|abi contract.sol  => At least one must be provided
 // solcjs build --bin -o out contrac1.sol contract2.sol                 
 // solcjs build --abi --optimize c.sol              
-=======
-var solc = helpers.getSolidityCompiler(compilers.repository, compiler);
-console.log("Using compiler version:" + solc.version());
->>>>>>> parent of ce75e1d... Add initial support for local list
 
 if (cmd === 'build'){
   var files  = argv._.shift();
@@ -423,43 +342,3 @@ if (cmd === 'build'){
 }
 
 
-<<<<<<< HEAD
-=======
-if (cmd === 'get'){
-  if (argv.list) {
-    console.log('Getting the list of all versions ...');
-    compilers.getList(function (list) {
-      list = JSON.parse(list).builds;
-      for (var i = list.length - 1; i >= 0; i--) {
-        console.log(list[i].version, list[i].path);
-      }
-      helpers.exit();
-    });
-  }
-
-  compilers.getList(function (list) {
-    list = JSON.parse(list);
-
-    var wanted = null;
-    if (requestedVersion) {
-      console.log('Requested version: ' + requestedVersion);
-      wanted = requestedVersion;
-    } else {
-      console.log('Requested version: latest release');
-      wanted = list.releases[pkg.version.match(/^(\d+\.\d+\.\d+)$/)[1]];
-    }
-
-    downloadBinary(wanted, function (file) {
-      if (!requestedVersion){
-        fs.copy(file, 'soljson.js'); // for backward compatibility
-      }
-    });
-  });
-}
-
-
-if (cmd === 'version'){
-  console.log(solc.version());
-  helpers.exit();
-}
->>>>>>> parent of ce75e1d... Add initial support for local list
